@@ -16,15 +16,13 @@ VOLUME ["/data/"]
 
 USER worker
 
+COPY .env.example /data/.env.example
+
 COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-install-project --no-dev
 
 COPY --chown=worker:worker . .
 
-RUN chmod +x /app/entrypoint.sh
-
 EXPOSE 8000
-
-ENTRYPOINT ["entrypoint.sh"]
 
 CMD ["sh", "-c", "gunicorn --workers $(nproc) --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 human_challenge.asgi:application"]

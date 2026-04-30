@@ -13,6 +13,7 @@ dependencies = [
     "nanoid>=2.0.0",
     "pyjwt[crypto]>=2.12.1",
     "python-dotenv>=1.2.2",
+    "uvicorn>=0.46.0",
 ]
 
 [[tool.uv.index]]
