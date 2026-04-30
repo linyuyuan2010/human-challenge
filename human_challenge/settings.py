@@ -30,7 +30,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG_MODE", "False").lower() == "true"
 
 ALLOWED_HOSTS = []
 
@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'human_challenge.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': Path("/data/") / 'db.sqlite3',
     }
 }
 
@@ -139,8 +139,6 @@ CACHES = {
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
 
-TAILWIND_APP_NAME = 'theme'
-
 HCAPTCHA_SITEKEY = os.getenv("HCAPTCHA_SITEKEY")
 HCAPTCHA_SECRETKEY = os.getenv("HCAPTCHA_SECRETKEY")
 
@@ -150,7 +148,7 @@ PUBLIC_KEY_PATH = os.getenv("JWT_PUBLIC_KEY_PATH")
 if not (PRIVATE_KEY_PATH and PUBLIC_KEY_PATH):
     raise ImproperlyConfigured
 
-JWT_PRIVATE_KEY = BASE_DIR / PRIVATE_KEY_PATH
-JWT_PUBLIC_KEY = BASE_DIR / PUBLIC_KEY_PATH
+JWT_PRIVATE_KEY = Path("/data/") / PRIVATE_KEY_PATH
+JWT_PUBLIC_KEY = Path("/data/") / PUBLIC_KEY_PATH
 
 JWT_ALGORITHM = "ES256"

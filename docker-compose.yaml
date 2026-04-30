@@ -1,0 +1,21 @@
+services:
+  app:
+    image: lyy2182/human-challenge:1.0
+    container_name: human-challenge-app
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_HOST=redis://redis:6379/1
+      - DEBUG=False
+    depends_on:
+      - redis
+    volumes:
+      - ./data:/data
+
+  redis:
+    image: redis:alpine
+    container_name: human-challenge-redis
+    restart: always
+    ports:
+      - "6379:6379"
