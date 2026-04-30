@@ -1,0 +1,86 @@
+{% extends "layout.html" %}
+
+{% block title %}检查验证{% endblock title %}
+
+{% block style %}
+<style>
+    .father-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100vh;
+        background-color: #e9ffe3;
+    }
+</style>
+{% endblock style %}
+
+{% block script %}
+<script>
+    async function verified(token) {
+        const cButton = document.getElementById("checkButton");
+        cButton.style.display = "flex";
+    }
+    async function checkCode () {
+        const captchaResponse = hcaptcha.getResponse();
+
+        if (!captchaResponse) {
+            alert("未通过验证");
+            return;
+        }
+
+        const inputBox = document.getElementById("verify_code");
+        const code = inputBox.value;
+
+        const fetchResponse = await fetch('{% url "api:check" %}',{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                code: code,
+                hcaptcha_response: captchaResponse,
+            })
+        })
+
+        result = await fetchResponse.json();
+
+        if (result.success) {
+            const resultBox = document.getElementById("resultBox");
+            const resultPart = document.getElementById("resultPart");
+            const inputPart = document.getElementById("inputPart");
+            resultBox.innerHTML = "人类验证通过！";
+            resultPart.style.display ="flex";
+            inputPart.style.display = "none";
+        } else if (!result.success) {
+            const resultBox = document.getElementById("resultBox");
+            const inputPart = document.getElementById("inputPart");
+            const resultPart = document.getElementById("resultPart");
+            inputPart.style.display = "none";
+            resultBox.innerHTML = "人类验证未通过！";
+            resultPart.style.display ="flex";
+        }
+    }
+</script>
+<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+{% endblock script %}
+
+{% block body %}
+<div class="father-container">
+    <div style="display: inline;">
+        <div id="inputPart">
+            <span>输入验证码</span>
+            <input type="text" id="verify_code" placeholder="验证码" />
+            <br />
+            <div class="h-captcha" data-sitekey="{{ site_key }}" data-callback="verified"></div>
+            <br />
+            <button onclick="checkCode()" style="display: none;" id="checkButton">检查</button>
+        </div>
+        <div id="resultPart" style="display: none;">
+            <h1 id="resultBox"></h1>
+            <button onclick="window.location.reload()">刷新</button>
+        </div>
+    </div>
+</div>
+{% endblock body %}
