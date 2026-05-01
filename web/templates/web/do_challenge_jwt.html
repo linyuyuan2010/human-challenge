@@ -1,0 +1,99 @@
+{% extends "layout.html" %}
+
+{% block title %}进行验证{% endblock title %}
+
+{% block script %}
+<script>async function onCaptchaSuccess (token) {
+    try {
+        const response = await fetch('{% url "api:submit-jwt" %}', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                token: token,
+                sig: "{{ sig }}"
+            }),
+        });
+        const result = await response.json();
+        
+        if (result.success) {
+            const callbackUrl = new URL('{{ callback }}');
+            callbackUrl.searchParams.append('id', result.id);
+            window.location.href = callbackUrl.toString();
+        } else {
+            const popup = document.querySelector('.pop-up');
+            const showreason = document.getElementById('reason');
+            showreason.innerHTML = result.reason;
+            popup.style.backgroundColor = `rgb(255, 77, 79)`;
+            popup.style.display = "flex";
+        }
+    } catch (error) {
+        console.error("请求失败:", error);
+    }
+}
+</script>
+<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+{% endblock script %}
+
+{% block style %}
+<style>
+    .father-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100vh;
+        background-color: #e9ffe3;
+    }
+    .pop-up {
+        z-index: 100;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 300px;
+        min-height: 200px;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+        padding: 20px;
+        color: white;
+    }
+    header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background-color: #88d3ff;
+        padding: 1rem;
+        padding-bottom: 0.5rem;
+        padding-top: 0.5rem;
+        justify-content: right;
+    }
+    a {
+        color: #e9ffe3;
+    }
+    a:visited {
+        color: #e9ffe3;
+    }
+</style>
+{% endblock style %}
+
+{% block body %}
+<header>
+    <a href='{% url "web:check" %}'>前往验证</a>
+</header>
+<div class="father-container">
+    <div style="display: inline;">
+        <h3>这是什么？</h3>
+        <span>如果有人让你来到这个页面，说明ta怀疑你是人工智能。<br>请完成此验证。</span>
+        <div class="h-captcha" data-sitekey="{{ site_key }}" data-callback="onCaptchaSuccess"></div>
+        <div class="pop-up">
+            <span id="reason"></span>
+        </div>
+    </div>
+</div>
+{% endblock body %}

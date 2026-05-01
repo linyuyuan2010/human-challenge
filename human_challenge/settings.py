@@ -18,12 +18,14 @@ from django.core.exceptions import ImproperlyConfigured
 
 env = environ.Env(
     DEBUG_MODE=(bool, False),
-    ALLOW_HOSTS=(list, ["localhost"]),
-    CSRF_TRUSTED_HOSTS=(list, ["http://localhost"]),
+    ALLOW_HOSTS=(list, []),
+    CSRF_TRUSTED_HOSTS=(list, []),
     HCAPTCHA_SITEKEY=(str, "10000000-ffff-ffff-ffff-000000000001"),
     HCAPTCHA_SECRETKEY=(str, "0x0000000000000000000000000000000000000000"),
     JWT_PRIVATE_KEY_PATH=(str, ),
     JWT_PUBLIC_KEY_PATH=(str, ),
+    ISSUESER=(str, 'example.com'),
+    EXPIRING_IN=(int, 300),
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -168,3 +170,7 @@ _PRIV.close()
 _PUB.close()
 
 JWT_ALGORITHM = "ES256"
+
+JWT_ISSUESER = env('ISSUESER')
+
+JWT_EXPIRING_IN = env.int('EXPIRING_IN')

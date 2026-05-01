@@ -14,3 +14,10 @@ class CheckChallenge(Schema):
 
 class CheckResponse(Schema):
     success: bool
+
+class ChallengeJWTResult(Schema):
+    token: str
+    sig: str
+
+class PublicKey(Schema):
+    payload: str

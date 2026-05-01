@@ -1,11 +1,15 @@
+import time
+
 from nanoid import generate
 from httpx import AsyncClient
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponse
 from ninja import NinjaAPI
 from django.conf import settings
 from django.core.cache import cache
+from django.core import signing
+import jwt
 
-from .schema import ChallengeResult, ChallengeResponse, CheckChallenge, CheckResponse
+from .schema import ChallengeResult, ChallengeResponse, CheckChallenge, CheckResponse, ChallengeJWTResult
 
 api = NinjaAPI(urls_namespace="api")
 
@@ -51,3 +55,43 @@ async def check(request: HttpRequest, data: CheckChallenge):
         await cache.adelete_many([f"challenge{code}"])
 
     return {"success": result}
+
+@api.post('submit-challenge-jwt/', url_name='submit_jwt', response=ChallengeResponse)
+async def submit_jwt(request: HttpRequest, data: ChallengeJWTResult):
+    token = data.token
+
+    async with AsyncClient() as client:
+        result = await client.post(
+            "https://api.hcaptcha.com/siteverify",
+            data={
+                "secret": settings.HCAPTCHA_SECRETKEY,
+                "response": token,
+                "sitekey": settings.HCAPTCHA_SITEKEY,
+            }
+        )
+
+    if not result.json().get("success"):
+        return {"success": False, "reason": "hCaptcha 说不行"}
+    
+    print(data.sig)
+
+    original: dict = signing.loads(data.sig)
+
+    payload = {
+        "sub": original.get('sub'),
+        "aud": original.get('aud'),
+        "iss": settings.JWT_ISSUESER,
+        "exp": int(time.time()) + settings.JWT_EXPIRING_IN,
+        "iat": int(time.time()),
+        "nonce": original.get('nonce'),
+        "jti": generate(size=20).upper(),
+    }
+
+    token = jwt.encode(payload, settings.JWT_PRIVATE_KEY, algorithm=settings.JWT_ALGORITHM)
+
+    return {"success": True, "id": token}
+
+@api.get('public-key/', url_name='public_key')
+def public_key(request: HttpRequest, response: HttpResponse):
+    response["Cache-Control"] = "public, max-age=86400, s-maxage=86400"
+    return {"payload": settings.JWT_PUBLIC_KEY}
