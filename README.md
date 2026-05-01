@@ -105,10 +105,15 @@ JWT 的载荷格式为
 ## Q&A
 
 Q0: JWT 模式下 如果用户没通过验证怎么办
+
 A0: 如果用户没通过验证则根本不会颁发令牌 如果你收到了 意味着用户通过了。
 
+
 Q1: 怎么得到密钥对
+
 A1: 可以利用 openssl 生成 生成私钥：`openssl ecparam -name prime256v1 -genkey -noout -out private.pem` 生成公钥：`openssl ec -in private.pem -pubout -out public.pem`
 
+
 Q2: 验证码的有效期是多久
+
 A2: 普通模式默认为 60 秒，JWT 模式默认为 5 分钟
