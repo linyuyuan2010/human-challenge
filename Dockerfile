@@ -25,4 +25,6 @@ COPY --chown=worker:worker . .
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "gunicorn --workers $(nproc) --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 human_challenge.asgi:application"]
+ENTRYPOINT ["python", "entrypoint.py"]
+
+CMD ["gunicorn", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000", "human_challenge.asgi:application"]
