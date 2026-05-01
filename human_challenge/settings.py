@@ -28,8 +28,13 @@ env = environ.Env(
     EXPIRING_IN=(int, 300),
 )
 
+DEBUG = env('DEBUG_MODE')
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+if DEBUG:
+    BASE_DIR = Path(__file__).resolve().parent.parent
+else:
+    BASE_DIR = Path('/data/')
 
 environ.Env.read_env(BASE_DIR / '.env')
 
@@ -41,7 +46,7 @@ environ.Env.read_env(BASE_DIR / '.env')
 SECRET_KEY = env('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG_MODE')
+
 
 ALLOWED_HOSTS = env.list('ALLOW_HOSTS')
 

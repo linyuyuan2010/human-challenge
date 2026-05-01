@@ -11,6 +11,7 @@
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             }
             footer {
+                display: flex;
                 position: fixed;
                 bottom: 0;
                 background-color: #88d3ff;
@@ -18,6 +19,7 @@
                 padding: 1rem;
                 padding-top: 0.5rem;
                 padding-bottom: 0.5rem;
+                justify-content: space-between;
             }
         </style>
         <title>{% block title %}{% endblock title %}</title>
@@ -30,6 +32,7 @@
         {% block body %}{% endblock body %}
         <footer>
             <div>Powered by lyy2182</div>
+            <div>项目使用 Apache 2.0 <a href="http://github.com/linyuyuan2010/human-challenge/">开源</a></div>
         </footer>
     </body>
 </html>

@@ -1,6 +1,6 @@
 services:
   app:
-    image: lyy2182/human-challenge:1.0
+    image: lyy2182/human-challenge:latest
     container_name: human-challenge-app
     restart: always
     ports:
