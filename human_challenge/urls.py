@@ -20,11 +20,13 @@ from django.conf.urls.static import static
 from django.urls import path, include
 
 from api import apis
+from .well_known import knowns
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
     path('', include('web.urls')),
-    path('api/', apis.api.urls)
+    path('api/', apis.api.urls),
+    path('.well-known/', knowns.urls)
 ]
 
 if settings.DEBUG:

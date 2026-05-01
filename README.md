@@ -83,7 +83,8 @@ docker compose up
 
 2. 用户完成操作后 此工具会将用户重定向至第2步时的回调url 验证结果将以 `id` 参数传达。例如: `https://example.com/?id=<验证结果，标准JWT>`
 
-3. 验证 JWT 使用的是 `ES256` 算法签名 其公钥在 `https://hc.winefox.cc/api/public-key/` 可用。返回体格式为 `{"payload": "<证书内容>"}` 证书格式为 PEM。
+3. 验证 JWT 使用的是 `ES256` 算法签名 其公钥在 `https://hc.winefox.cc/.well-known/jwks.json` 可用。返回体格式为标准 JWKS。
+    - 另外 有一个非标准接口：`https://hc.winefox.cc/api/public-key/` 提供但不建议使用 此接口将直接返回 pem 格式公钥。
 
 4. 解码 JWT 验签后 注意一定要校验 `iss` `aud` `nonce` 字段，`nonce` 字段和第一步生成的应该相同。
 
@@ -99,7 +100,6 @@ JWT 的载荷格式为
   "jti": "对于此jwt随机生成的唯一标识符"
 }
 ```
-注：除了 `nonce` 字段外都是标准的 JWT 载荷字段，如果这里表述不清可以直接去看更详细的[JWT 相关文档](https://datatracker.ietf.org/doc/html/rfc7519)或者在互联网搜索、询问 AI
 
 
 ## Q&A

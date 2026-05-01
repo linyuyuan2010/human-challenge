@@ -2,12 +2,12 @@ import time
 
 from nanoid import generate
 from httpx import AsyncClient
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from ninja import NinjaAPI
 from django.conf import settings
 from django.core.cache import cache
 from django.core import signing
-import jwt
+from authlib.jose import jwt
 
 from .schema import ChallengeResult, ChallengeResponse, CheckChallenge, CheckResponse, ChallengeJWTResult
 
@@ -77,6 +77,11 @@ async def submit_jwt(request: HttpRequest, data: ChallengeJWTResult):
 
     original: dict = signing.loads(data.sig)
 
+    header = {
+        "alg": settings.JWT_ALGORITHM,
+        "kid": "v1",
+    }
+
     payload = {
         "sub": original.get('sub'),
         "aud": original.get('aud'),
@@ -87,7 +92,7 @@ async def submit_jwt(request: HttpRequest, data: ChallengeJWTResult):
         "jti": generate(size=20).upper(),
     }
 
-    token = jwt.encode(payload, settings.JWT_PRIVATE_KEY, algorithm=settings.JWT_ALGORITHM)
+    token = jwt.encode(header, payload, settings.JWT_PRIVATE_KEY)
 
     return {"success": True, "id": token}
 
