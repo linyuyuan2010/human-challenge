@@ -10,12 +10,11 @@ knowns = NinjaAPI(urls_namespace="well-known")
 def wk_jwks(request: HttpRequest, response: HttpResponse):
     response["Cache-Control"] = "public, max-age=86400, s-maxage=86400"
 
-    key = JsonWebKey.import_key(settings.JWT_PUBLIC_KEY, {"kty": "EC"})
+    key = JsonWebKey.import_key(settings.JWT_PUBLIC_KEY, {"kty": "EC", "kid": "v1"})
 
     jwks = {
         "keys": [
             {
-                "kid": "v1",
                 "use": "sig",
                 "alg": settings.JWT_ALGORITHM,
                 **key.as_dict(),
