@@ -10,31 +10,40 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
-import os
 from pathlib import Path
 
+import environ
 from django.core.exceptions import ImproperlyConfigured
 
-from dotenv import load_dotenv
 
-load_dotenv('/data/.env')
+env = environ.Env(
+    DEBUG_MODE=(bool, False),
+    ALLOW_HOSTS=(list, ["localhost"]),
+    CSRF_TRUSTED_HOSTS=(list, ["http://localhost"]),
+    HCAPTCHA_SITEKEY=(str, "10000000-ffff-ffff-ffff-000000000001"),
+    HCAPTCHA_SECRETKEY=(str, "0x0000000000000000000000000000000000000000"),
+    JWT_PRIVATE_KEY_PATH=(str, ),
+    JWT_PUBLIC_KEY_PATH=(str, ),
+)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+environ.Env.read_env(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+SECRET_KEY = env('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG_MODE", "False").lower() == "true"
+DEBUG = env('DEBUG_MODE')
 
-ALLOWED_HOSTS = os.getenv("ALLOW_HOSTS", "localhost").split(",")
+ALLOWED_HOSTS = env.list('ALLOW_HOSTS')
 
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_HOSTS", "https://localhost,http://localhost").split(",")
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_HOSTS')
 
 # Application definition
 
@@ -85,7 +94,7 @@ WSGI_APPLICATION = 'human_challenge.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': Path("/data/") / 'db.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -129,10 +138,10 @@ STATIC_URL = 'static/'
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.getenv("REDIS_HOST"),
+        "LOCATION": env('REDIS_HOST'),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "PASSWORD": os.getenv("REDIS_PASSWORD"),
+            "PASSWORD": env('REDIS_PASSWORD'),
         }
     }
 }
@@ -140,16 +149,22 @@ CACHES = {
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
 
-HCAPTCHA_SITEKEY = os.getenv("HCAPTCHA_SITEKEY")
-HCAPTCHA_SECRETKEY = os.getenv("HCAPTCHA_SECRETKEY")
+HCAPTCHA_SITEKEY = env('HCAPTCHA_SITEKEY')
+HCAPTCHA_SECRETKEY = env('HCAPTCHA_SECRETKEY')
 
-PRIVATE_KEY_PATH = os.getenv("JWT_PRIVATE_KEY_PATH")
-PUBLIC_KEY_PATH = os.getenv("JWT_PUBLIC_KEY_PATH")
+PRIVATE_KEY_PATH = env.str('JWT_PRIVATE_KEY_PATH')
+PUBLIC_KEY_PATH = env.str('JWT_PUBLIC_KEY_PATH')
 
 if not (PRIVATE_KEY_PATH and PUBLIC_KEY_PATH):
     raise ImproperlyConfigured
 
-JWT_PRIVATE_KEY = Path("/data/") / PRIVATE_KEY_PATH
-JWT_PUBLIC_KEY = Path("/data/") / PUBLIC_KEY_PATH
+_PRIV = open(BASE_DIR / PRIVATE_KEY_PATH)
+_PUB = open(BASE_DIR / PUBLIC_KEY_PATH)
+
+JWT_PRIVATE_KEY = _PRIV.read()
+JWT_PUBLIC_KEY = _PUB.read()
+
+_PRIV.close()
+_PUB.close()
 
 JWT_ALGORITHM = "ES256"
