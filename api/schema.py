@@ -7,6 +7,7 @@ class ChallengeResponse(Schema):
     success: bool
     id: str | None = None
     reason: str | None = None
+    method: str | None = None
 
 class CheckChallenge(Schema):
     code: str

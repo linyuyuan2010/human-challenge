@@ -90,11 +90,12 @@ async def submit_jwt(request: HttpRequest, data: ChallengeJWTResult):
         "iat": int(time.time()),
         "nonce": original.get('nonce'),
         "jti": generate(size=20).upper(),
+        "verified": True,
     }
 
     token = jwt.encode(header, payload, settings.JWT_PRIVATE_KEY)
-
-    return {"success": True, "id": token}
+    print(original.get('method'))
+    return {"success": True, "id": token, "method": original.get('method')}
 
 @api.get('public-key/', url_name='public_key')
 def public_key(request: HttpRequest, response: HttpResponse):

@@ -19,9 +19,19 @@
         const result = await response.json();
         
         if (result.success) {
-            const callbackUrl = new URL('{{ callback }}');
-            callbackUrl.searchParams.append('id', result.id);
-            window.location.href = callbackUrl.toString();
+            console.log(result)
+            if (result.method == "post") {
+                console.log("post mode actived")
+                const idTokenForm = document.getElementById('id-token-form');
+                const idTokenValue = document.getElementById('id-token');
+                idTokenValue.value = result.id;
+                setTimeout(() => idTokenForm.submit(), 50);
+            } else {
+                console.log("get mode actived")
+                const callbackUrl = new URL('{{ callback }}');
+                callbackUrl.searchParams.append('id', result.id);
+                window.location.href = callbackUrl.toString();
+            }
         } else {
             const popup = document.querySelector('.pop-up');
             const showreason = document.getElementById('reason');
@@ -96,4 +106,7 @@
         </div>
     </div>
 </div>
+<form action="{{ callback }}" method="post" id="id-token-form">
+    <input type="hidden" id="id-token" name="id" value="default_token_placeholder_do_not_trust" />
+</form>
 {% endblock body %}
