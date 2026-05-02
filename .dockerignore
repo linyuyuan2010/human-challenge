@@ -222,3 +222,6 @@ __marimo__/
 keypair
 
 README.md
+.git
+.vscode
+.gitignore
