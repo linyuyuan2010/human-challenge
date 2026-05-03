@@ -113,3 +113,7 @@ A0: 可以利用 openssl 生成 生成私钥：`openssl ecparam -name prime256v1
 Q1: 验证码的有效期是多久
 
 A1: 普通模式默认为 60 秒，JWT 模式默认为 5 分钟
+
+
+## 致谢
+此项目的诞生离不开众多开源项目的支持 详情请见 [LICENSES](./LICENSES/)
