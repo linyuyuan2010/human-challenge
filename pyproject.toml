@@ -10,13 +10,17 @@ dependencies = [
     "django-environ>=0.13.0",
     "django-ninja>=1.6.2",
     "django-redis>=6.0.0",
-    "gunicorn>=25.3.0",
     "httpx>=0.28.1",
     "nanoid>=2.0.0",
-    "uvicorn>=0.46.0",
 ]
 
 [[tool.uv.index]]
 name = "tuna"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 default = true
+
+[dependency-groups]
+prod = [
+    "gunicorn>=25.3.0",
+    "uvicorn>=0.46.0",
+]

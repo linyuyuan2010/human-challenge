@@ -7,7 +7,7 @@ ENV UV_PYTHON_DOWNLOADS=never \
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 COPY pyproject.toml uv.lock ./
-RUN uv sync --frozen --no-install-project --no-dev
+RUN uv sync --frozen --no-install-project --no-dev --group prod --no-editable
 
 FROM python:3.14-slim
 

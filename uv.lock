@@ -261,7 +261,7 @@ wheels = [
 
 [[package]]
 name = "human-challenge"
-version = "0.1.0"
+version = "1.0.0"
 source = { virtual = "." }
 dependencies = [
     { name = "authlib" },
@@ -269,9 +269,13 @@ dependencies = [
     { name = "django-environ" },
     { name = "django-ninja" },
     { name = "django-redis" },
-    { name = "gunicorn" },
     { name = "httpx" },
     { name = "nanoid" },
+]
+
+[package.dev-dependencies]
+prod = [
+    { name = "gunicorn" },
     { name = "uvicorn" },
 ]
 
@@ -282,9 +286,13 @@ requires-dist = [
     { name = "django-environ", specifier = ">=0.13.0" },
     { name = "django-ninja", specifier = ">=1.6.2" },
     { name = "django-redis", specifier = ">=6.0.0" },
-    { name = "gunicorn", specifier = ">=25.3.0" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "nanoid", specifier = ">=2.0.0" },
+]
+
+[package.metadata.requires-dev]
+prod = [
+    { name = "gunicorn", specifier = ">=25.3.0" },
     { name = "uvicorn", specifier = ">=0.46.0" },
 ]
 
