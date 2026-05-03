@@ -226,3 +226,5 @@ README.md
 .vscode
 .gitignore
 tests.py
+
+.uv

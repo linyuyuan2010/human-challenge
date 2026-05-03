@@ -26,6 +26,7 @@ env = environ.Env(
     JWT_PUBLIC_KEY_PATH=(str, ),
     ISSUESER=(str, 'example.com'),
     EXPIRING_IN=(int, 300),
+    JWT_KID=(str, "v1"),
 )
 
 DEBUG = env('DEBUG_MODE')
@@ -179,3 +180,5 @@ JWT_ALGORITHM = "ES256"
 JWT_ISSUESER = env('ISSUESER')
 
 JWT_EXPIRING_IN = env.int('EXPIRING_IN')
+
+JWT_KID = env("KID")

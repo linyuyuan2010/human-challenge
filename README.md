@@ -71,6 +71,7 @@ docker compose up
 | JWT_PUBLIC_KEY_PATH | 否 | - | 公钥文件路径（相对于 /data/ 目录，如 keys/public.pem）。 |
 | ISSUER | 否 | example.com | JWT 签发者名称，建议填写你的域名。 |
 | EXPIRING_IN | 否 | 300 | JWT 令牌有效期，单位为秒（默认 5 分钟）。 |
+| KID | 否 | v1 | JWT/JWK的KID |
 
 ## JWT模式
 *下文中所有`hc.winefox.cc`如果自托管的话可以替换为你的域名*

@@ -1,15 +1,18 @@
-FROM python:3.14-slim AS builder
+FROM python:3.14-alpine AS builder
+
+ENV UV_PYTHON_DOWNLOADS=never \
+    UV_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple \
+    UV_COMPILE_BYTECODE=0 \
+    UV_LINK_MODE=copy
 
 WORKDIR /app
 
-ENV UV_PYTHON_DOWNLOADS=never \
-    UV_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple
-
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
-COPY pyproject.toml uv.lock ./
-RUN uv sync --frozen --no-install-project --no-dev --group prod --no-editable
 
-FROM python:3.14-slim
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-install-project --no-dev --group prod --no-editable --no-cache
+
+FROM python:3.14-alpine
 
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -17,11 +20,13 @@ ENV PATH="/app/.venv/bin:$PATH" \
 
 WORKDIR /app
 
-RUN useradd -m worker && mkdir -p /data && chown -R worker:worker /data /app
+RUN adduser -S -D -s /sbin/nologin worker && mkdir -p /data && chown worker /data
+
 USER worker
 
 COPY --from=builder --chown=worker:worker /app/.venv /app/.venv
 COPY --chown=worker:worker . .
+
 COPY .env.example /data/.env.example
 
 VOLUME ["/data/"]

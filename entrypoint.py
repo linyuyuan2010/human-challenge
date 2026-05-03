@@ -3,9 +3,11 @@ import os
 import sys
 
 installed = pathlib.Path('/data/INSTALLED.lock')
-if not installed.exists():
-    from django.core.management import execute_from_command_line
-    execute_from_command_line(["migrate"])
+if installed.exists():
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'human_challenge.settings')
+    
+    from django.core.management import call_command
+    call_command("migrate")
 
     installed.mkdir(parents=True)
 
