@@ -225,3 +225,4 @@ README.md
 .git
 .vscode
 .gitignore
+tests.py
