@@ -7,7 +7,8 @@ from ninja import NinjaAPI
 from django.conf import settings
 from django.core.cache import cache
 from django.core import signing
-from authlib.jose import jwt
+from joserfc import jwt
+from joserfc.jwk import ECKey
 
 from .schema import ChallengeResult, ChallengeResponse, CheckChallenge, CheckResponse, ChallengeJWTResult
 
@@ -72,14 +73,12 @@ async def submit_jwt(request: HttpRequest, data: ChallengeJWTResult):
 
     if not result.json().get("success"):
         return {"success": False, "reason": "hCaptcha 说不行"}
-    
-    print(data.sig)
 
     original: dict = signing.loads(data.sig)
 
     header = {
         "alg": settings.JWT_ALGORITHM,
-        "kid": "v1",
+        "kid": settings.JWT_KID,
     }
 
     payload = {
@@ -93,8 +92,8 @@ async def submit_jwt(request: HttpRequest, data: ChallengeJWTResult):
         "verified": True,
     }
 
-    token = jwt.encode(header, payload, settings.JWT_PRIVATE_KEY)
-    print(original.get('method'))
+    key = ECKey.import_key(settings.JWT_PRIVATE_KEY)
+    token = jwt.encode(header, payload, key, algorithms=[settings.JWT_ALGORITHM])
     return {"success": True, "id": token, "method": original.get('method')}
 
 @api.get('public-key/', url_name='public_key')
