@@ -84,7 +84,7 @@ async def submit_jwt(request: HttpRequest, data: ChallengeJWTResult):
     payload = {
         "sub": original.get('sub'),
         "aud": original.get('aud'),
-        "iss": settings.JWT_ISSUESER,
+        "iss": settings.JWT_ISSUER,
         "exp": int(time.time()) + settings.JWT_EXPIRING_IN,
         "iat": int(time.time()),
         "nonce": original.get('nonce'),

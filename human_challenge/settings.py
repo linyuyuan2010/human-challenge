@@ -24,7 +24,7 @@ env = environ.Env(
     HCAPTCHA_SECRETKEY=(str, "0x0000000000000000000000000000000000000000"),
     JWT_PRIVATE_KEY_PATH=(str, ),
     JWT_PUBLIC_KEY_PATH=(str, ),
-    ISSUESER=(str, 'example.com'),
+    ISSUER=(str, 'example.com'),
     EXPIRING_IN=(int, 300),
     JWT_KID=(str, "v1"),
 )
@@ -177,7 +177,7 @@ _PUB.close()
 
 JWT_ALGORITHM = "ES256"
 
-JWT_ISSUESER = env('ISSUESER')
+JWT_ISSUER = env('ISSUER')
 
 JWT_EXPIRING_IN = env.int('EXPIRING_IN')
 
